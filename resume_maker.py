@@ -1,12 +1,23 @@
 import openai
 import os
+from dotenv import load_dotenv
+import docx
+
+load_dotenv()
+
+def read_docx(file_path):
+    doc = docx.Document(file_path)
+    full_text = []
+    for paragraph in doc.paragraphs:
+        full_text.append(paragraph.text)
+    return '\n'.join(full_text)
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.read()
 
-def generate_resume(template, job_posting):
-    openai.api_key = os.getenv("OPENAI_API_KEY", "your_openai_api_key_here")
+def generate_resume(template, job_aposting):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
     prompt = f"""
     You are an expert resume writer. Using the following resume template:
@@ -29,11 +40,11 @@ def generate_resume(template, job_posting):
 
 def main():
     # File paths for the resume template and job posting
-    resume_template_path = 'resume_template.txt'
+    resume_template_path = 'resume_template.docx'
     job_posting_path = 'job_posting.txt'
 
     # Read the template and job posting
-    resume_template = read_file(resume_template_path)
+    resume_template = read_docx(resume_template_path)
     job_posting = read_file(job_posting_path)
 
     # Generate resume using the OpenAI API
